@@ -1,13 +1,5 @@
-using Printf
+include("common.jl")
 using DataStructures
-
-function read_day(day::Integer)
-    path = joinpath(@__DIR__, "..", "data", @sprintf("day%d.txt", day))
-    s = open(path, "r") do file
-        read(file, String)
-    end
-    return chomp(s)
-end
 
 function process_input(input)
     re = r"(\d+)\s+(\d+)"
@@ -31,5 +23,5 @@ function part_b(input)
 end
 
 input = read_day(1)
-@assert part_a(input) == 2815556
-@assert part_b(input) == 23927637
+println(part_a(input))
+println(part_b(input))

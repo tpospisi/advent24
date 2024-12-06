@@ -1,13 +1,5 @@
-using Printf
+include("common.jl")
 using DataStructures
-
-function read_day(day::Integer)
-    path = joinpath(@__DIR__, "..", "data", @sprintf("day%d.txt", day))
-    s = open(path, "r") do file
-        read(file, String)
-    end
-    return chomp(s)
-end
 
 function process_input(input)
     rules_str, seqs_str = split(input, "\n\n")
@@ -62,4 +54,4 @@ end
 
 input = read_day(5)
 println(part_a(input))
-@time println(part_b(input))
+println(part_b(input))
