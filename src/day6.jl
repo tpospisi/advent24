@@ -2,47 +2,36 @@ include("common.jl")
 using ResumableFunctions
 
 function process_input(input)
-    obstructions = Set{Tuple{Int, Int}}()
+    mat = permutedims(reduce(hcat, collect.(eachsplit(input, "\n"))))
 
-    rows = split(input, "\n")
-    bounds = length(rows), length(rows[1])
-
-    start = (-1, -1)
-    start_dir = (-1, 0)
-    for (ix, row) in enumerate(rows)
-        for (iy, char) in enumerate(row)
-            if char == '#'
-                push!(obstructions, (ix, iy))
-            elseif char == '^'
-                start = (ix, iy)
-            end
-        end
-    end
+    obstructions = Set(findall(mat .== '#'))
+    start = findfirst(mat .== '^')
+    start_dir = CartesianIndex(-1, 0)
+    bounds = axes(mat)
 
     return start, start_dir, obstructions, bounds
 end
 
-rotate(dir) = (dir[2], -dir[1])
-inbounds(pos, bounds) = all(pos .> (0, 0)) && all(pos .<= bounds)
+rotate(dir::CartesianIndex{2}) = CartesianIndex(dir[2], -dir[1])
 
 @resumable function traverse(pos, dir, obstructions, bounds)
     while true
-        if !inbounds(pos, bounds)
+        if !checkindex(Bool, bounds, pos)
             break
         end
         @yield (pos, dir)
-        if pos .+ dir in obstructions
+        if pos + dir in obstructions
             dir = rotate(dir)
         else
-            pos = pos .+ dir
+            pos += dir
         end
     end
 end
 
 function loops(start_pos, start_dir, obstructions, bounds)
-    visited = Set{Tuple{Tuple{Int, Int}, Tuple{Int, Int}}}()
+    visited = Set{Tuple{CartesianIndex{2}, CartesianIndex{2}}}()
 
-    prev_dir = (0, 0)
+    prev_dir = CartesianIndex(0, 0)
     for (pos, dir) in traverse(start_pos, start_dir, obstructions, bounds)
         if dir != prev_dir # only keep track of turns
             if (pos, dir) in visited
@@ -63,13 +52,13 @@ end
 function part_b(input)
     start_pos, start_dir, obstructions, bounds = process_input(input)
 
-    visited = Set{Tuple{Int, Int}}()
-    added_sites = Set{Tuple{Int, Int}}()
+    visited = Set{CartesianIndex{2}}()
+    added_sites = Set{CartesianIndex{2}}()
     for (pos, dir) in traverse(start_pos, start_dir, obstructions, bounds)
         push!(visited, pos)
 
-        new_site = pos .+ dir
-        if (new_site in obstructions) || new_site in visited || !inbounds(new_site, bounds)
+        new_site = pos + dir
+        if (new_site in obstructions) || new_site in visited || !checkindex(Bool, bounds, new_site)
             continue
         end
 
