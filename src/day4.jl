@@ -42,7 +42,3 @@ end
 input = read_day(4)
 println(part_a(input))
 println(part_b(input))
-@time println(part_a(input))
-@time println(part_b(input))
-
-

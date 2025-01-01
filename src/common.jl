@@ -7,3 +7,7 @@ function read_day(day::Integer)
     end
     return chomp(s)
 end
+
+function matfromchar(block)
+    return permutedims(reduce(hcat, collect.(eachsplit(block, "\n"))))
+end

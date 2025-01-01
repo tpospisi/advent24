@@ -1,9 +1,5 @@
 include("common.jl")
 
-function process_input(input)
-    return input
-end
-
 function part_a(input)
     reg = r"mul\((\d{1,3}),(\d{1,3})\)"
     tot = 0

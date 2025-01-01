@@ -13,7 +13,7 @@ function part_a(input)
     left_list, right_list = process_input(input)
     sort!(left_list)
     sort!(right_list)
-    return sum(abs.(left_list .- right_list))
+    return sum(@. abs(left_list - right_list))
 end
 
 function part_b(input)
